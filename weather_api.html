@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Weather API</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div>
+			<label for="city" class="form-label">Enter City Name</label>
+			<input type="text" class="form-control" id="city" placeholder="Enter City">
+		</div>
+		<div>
+			<h2>Weather Infomation</h2>	
+			<h6>City name : </h6><span id="opCitynName"></span>,<span id="opCountryNamw"></span>
+			<p>Temp : </p><span id="opTemp"></span>C
+			<p>Hum : </p><span id="opHum"></span>%
+			<p>Weather : </p><span id="weather"></span>
+		</div>							
+	</div>
+</body>
+<script>
+	var apiUrl = 'http://api.openweathermap.org/data/2.5/weather?appid=969c25b03c21d17e7f2e6d28b37978a8&units=metric';
+	var city = document.querySelector('#city');
+	//bắt sự kiện enter (keyCode == 1)=>Bấm phím enter
+	city.onkeydown = function(event) {
+		if(event.keyCode === 13){
+			//lấy dữ liệu từ input=>submit request to API Weather
+			var cityname = event.target.value;
+
+			var requestUrl = apiUrl + '&q=' + cityname;
+
+			//send request
+			fetch(requestUrl,{
+				method : "get"
+			})
+			.then((respionse)=>respionse.json())
+			.then((data)=>{
+				console.log(data);
+				document.querySelector('#opCitynName').innerText = data.name;
+				document.querySelector('#opCountryNamw').innerText = data.sys.country;
+				document.querySelector('#opTemp').innerText = data.main.temp;
+				document.querySelector('#opHum').innerText = data.main.humidity;
+				document.querySelector('#weather').innerText = data.weather[0].description;
+			});
+
+		}
+	}
+
+</script>	
+</html>

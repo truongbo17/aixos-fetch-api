@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Parcel Sandbox</title>
+  <meta charset="UTF-8" />
+</head>
+
+<body>
+  <div id="msg"></div>
+  <table>
+    <thead>
+      <th>STT</th>
+      <th>Name</th>
+      <th>Avatar</th>
+      <th>Address</th>
+      <th></th>
+    </thead>
+    <tbody id="app"></tbody>
+  </table>
+
+  <script>
+    var url = "https://619cd19468ebaa001753cc8b.mockapi.io/hotel/hotel";
+    fetch(url, {
+      method: "get"
+    })
+    .then((respionse) => respionse.json())
+    .then((data) => {
+      document.querySelector("#app").innerHTML = "";
+      if (data.length > 0) {
+        var content = ``;
+        var index = 1;
+        data.forEach((element) => {
+          content += `
+          <tr id="row-${element.id}">
+          <td>${index++}</td>
+          <td>${element.name}</td>
+          <td><img src=${element.avatar} style="width:20%"></td>
+          <td>${element.address}</td>
+          <td><button>Sửa</button></td>
+          <td><button onclick="removeElement(${element.id})">Xóa</button></td>
+          </tr>`;
+          document.querySelector("#app").innerHTML = content;
+        });
+      }
+    });
+
+    function removeElement(id) {
+      var removeId = document.querySelector("#row-" + id);
+      removeId.parentElement.removeChild(removeId);
+
+      var removeUrl = url + "/" + id;
+      fetch(removeUrl, {
+        method: "delete"
+      })
+      .then(respionse => respionse.json())
+      .then(data => {
+        document.querySelector("#msg").innerHTML = `<p style="color:red">Xóa thành công : ${data.name} !</p>`;
+      })
+    }
+  </script>
+</body>
+</html>

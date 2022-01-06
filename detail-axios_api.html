@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Axios API</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+	<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+	<div class="container">
+		<h3>Danh sách phòng khách sạn</h3>
+		<a href="add-detail-axios_api.html" class="btn btn-success">Add</a>
+		<table class="table">
+			<thead>
+				<th>STT</th>
+				<th>Room name</th>
+				<th>Floor</th>
+				<th>Image</th>
+				<th>Price</th>
+				<th></th>
+				<th></th>
+				<th></th>
+			</thead>
+			<tbody id="app"></tbody>
+		</table>				
+	</div>
+</body>
+<script>
+	//get hotel id from URL 
+	var hotel_id = null;
+	const urlParam = new URLSearchParams(window.location.search);
+	hotel_id = urlParam.get('hotel-id');
+	console.log(hotel_id);
+
+	//API URL
+	const apiUrl = "https://61a5f9938395690017be8f78.mockapi.io/hotel/" + hotel_id + "/room";
+	axios.get(apiUrl)
+	.then(res => {
+		if(res.statusText === "OK"){
+			document.querySelector('#app').innerHTML = "";
+			var data = res.data;
+			var content = ``;
+			var index = 1;
+			data.forEach((element)=>{
+				content += `
+				<tr id="row-${element.id}">
+				<td>${index++}</td>
+				<td>${element.room_name}</td>
+				<td>${element.floor}</td>
+				<td><img src=${element.image} style="width:20%"></td>
+				<td>${element.price} $</td>
+				<td>
+				<a href="edit-detail-axios_api.html?hotel-id=${element.hotelId}&room-id=${element.id}" class="btn btn-success">Edit</a>
+				</td>
+				<td>
+				<button onclick="removeElement(${element.id})" class="btn btn-danger">Xóa</button>
+				</td>
+				</tr>`;
+				document.querySelector("#app").innerHTML = content;
+			});
+		}
+	})
+
+	function removeElement(id){
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "You won't be able to revert this!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, delete it!'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				var deleteUrl = apiUrl + "/" + id;
+				axios.delete(deleteUrl)
+				.then(res => {
+					console.log(res);
+				})
+				.then(data=>{
+					var removeId = document.querySelector('#row-'+id);
+					removeId.parentElement.removeChild(removeId);
+					Swal.fire(
+						'Deleted!',
+						'Your file has been deleted.',
+						'success'
+						)
+				})
+			}	
+		})
+	}
+</script>	
+</html>

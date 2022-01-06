@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Axios API</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+	<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body onload="getHotelInfo()">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-3">
+				<form onsubmit="return editHotel(this)">
+					<div class="form-group">
+						<label for="">Hotel name</label>
+						<input type="text" class="form-control" name="name">
+					</div>
+					<div class="form-group">
+						<label for="">Hotel thumbnail</label>
+						<input type="text" class="form-control" name="logo">
+					</div>
+					<div class="form-group">
+						<label for="">Hotel address</label>
+						<input type="text" class="form-control" name="address">
+					</div>
+					<div class="justify-content-center">
+						<button type="submit" class="btn btn-sm btn-success">Save</button>
+						&nbsp;
+						<a href="axios_api.html" class="btn btn-sm btn-warning">Cancel</a>
+					</div>
+				</form>		
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	const apiUrl ='https://61a5f9938395690017be8f78.mockapi.io/hotel';
+	var hotelInfo = {};
+	var id = null;
+	const name = document.querySelector('[name=name]');
+	const logo = document.querySelector('[name=logo]');
+	const address = document.querySelector('[name=address]');
+
+	function getHotelInfo(){
+		//get parameter on url
+		const urlParam = new URLSearchParams(window.location.search);
+		id = urlParam.get('id');
+		//send request to mockapi to get infomation hotel
+		const urlGetInfoHotel = apiUrl + "/" +id;
+		axios.get(urlGetInfoHotel)
+		.then(res=>{
+			if(res.statusText === "OK"){
+				hotelInfo = res.data;
+				//fill in the form with the data obtained to mockapi
+				name.value = hotelInfo.name;
+				logo.value = hotelInfo.avatar;
+				address.value = hotelInfo.address;
+			}
+		})
+	}
+
+	function editHotel(){
+			hotelInfo.name = name.value,
+			hotelInfo.logo = logo.value,
+			hotelInfo.address = address.value
+
+		//send request to mockapi use axios
+		
+		const urlUpdateInfoHotel = apiUrl + "/" +id;
+		axios.put(urlUpdateInfoHotel,hotelInfo).then(data=>{
+			if(data.statusText==="OK"){
+				window.location.href='axios_api.html';
+			}
+		});
+
+		return false;
+	}
+</script>	
+</html>

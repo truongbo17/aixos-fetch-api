@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Axios API</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+	<script src="http://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body onload="hotelName()">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-3">
+				<form onsubmit="return addRoom(this)">
+					<div class="form-group">
+						<label for="">Room name</label>
+						<input type="text" class="form-control" name="name">
+					</div>
+					<div class="form-group">
+						<label for="">Room floor</label>
+						<input type="number" class="form-control" name="floor">
+					</div>
+					<div class="form-group">
+						<label for="">Room image</label>
+						<input type="text" class="form-control" name="image">
+					</div>
+					<div class="form-group">
+						<label for="">Hotel price</label>
+						<input type="text" class="form-control" name="price">
+					</div>
+					<select name="hotel_name" id="hotel_name"class="form-control">
+					</select>
+					<br>
+					<div class="justify-content-center">
+						<button type="submit" class="btn btn-sm btn-success">Save</button>
+						&nbsp;
+						<a href="axios_api.html" class="btn btn-sm btn-warning">Cancel</a>
+					</div>
+				</form>		
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	const apiUrl = 'https://61a5f9938395690017be8f78.mockapi.io/hotel';
+
+	function hotelName(){
+		axios.get(apiUrl)
+		.then(res => {
+			if(res.statusText === "OK"){
+				document.querySelector('#hotel_name').innerHTML = "";
+				var data = res.data;
+				var content = `<option>Select hotel</option>`;
+				data.forEach((element) => {
+					content += `<option value="${element.id}">${element.name}</option>`;
+					document.querySelector('#hotel_name').innerHTML = content;
+				});
+			}
+		})
+	}
+	function addRoom(){
+		const room_name = document.querySelector('[name=name]').value;
+		const floor = document.querySelector('[name=floor]').value;
+		const image = document.querySelector('[name=image]').image;
+		const price = document.querySelector('[name=price]').value;
+		const hotel_name = document.querySelector('[name=hotel_name]').value;
+
+		const requestObj = {
+			room_name:room_name,
+			floor:floor,
+			image:image,
+			price:price,
+			hotel_name:hotel_name
+		}
+
+		var apiAddRoom = apiUrl + "/" + hotel_name + "/room";
+		// console.log(apiAddRoom);
+		axios.post(apiAddRoom,requestObj)
+		.then(data => {
+			if(data.statusText==="Created"){
+				alert("success");
+			}
+		})
+		return false;
+	}
+</script>	
+</html>
